@@ -40,10 +40,12 @@ jobs:
         run: npm run build
 
       # ---- Bump version & push tag back to main (avoid infinite loop via [skip ci]) ----
-      - name: Configure Git
+      - name: Commit all changes
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: commit changes before version bump" || echo "No changes to commit"
 
       - name: Bump version (patch) and tag
         run: |
