@@ -166,6 +166,7 @@ async function runGenerator(args: {
         generateSchema: schema.label as 'zod' | 'yup' | 'none',
         generateModule: generateModule,
         workspaceRoot: workspaceRoot,
+        angularVersion: versionInfo.majorVersion || undefined,
       };
 
       progress.report({ increment: 30, message: "Checking dependencies..." });

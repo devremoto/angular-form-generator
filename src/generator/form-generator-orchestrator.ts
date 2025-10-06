@@ -15,6 +15,7 @@ export interface GeneratorConfig {
     generateSchema?: 'zod' | 'yup' | 'none';
     generateModule?: boolean;
     workspaceRoot?: string; // Add workspace root for package management
+    angularVersion?: number; // Angular major version for version-specific features
 }
 
 export class FormGeneratorOrchestrator {
@@ -47,6 +48,10 @@ export class FormGeneratorOrchestrator {
             serviceName: config.serviceName,
             mode: config.mode,
             generateSchema: config.generateSchema,
+            generateModule: config.generateModule,
+            angularVersion: config.angularVersion,
+            modelFilePath: config.modelFilePath,
+            outputDirectory: path.join(config.outputDirectory, config.componentName),
         };
 
         // Generate component files
