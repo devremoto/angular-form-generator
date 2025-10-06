@@ -1,4 +1,4 @@
-import { Project, SourceFile, ClassDeclaration, PropertyDeclaration, SyntaxKind } from 'ts-morph';
+import { Project, SourceFile, ClassDeclaration, PropertyDeclaration } from 'ts-morph';
 
 export interface JSDocValidation {
     required?: boolean;
@@ -79,7 +79,7 @@ export class ModelParser {
 
     private extractPropertyInfo(prop: PropertyDeclaration): ModelProperty | null {
         const name = prop.getName();
-        if (!name) return null;
+        if (!name) { return null; }
 
         const typeNode = prop.getTypeNode();
         const initialValue = prop.getInitializer()?.getText();
@@ -195,12 +195,11 @@ export class ModelParser {
 
     private parseJSDocValidation(prop: PropertyDeclaration): JSDocValidation | undefined {
         const jsDocs = prop.getJsDocs();
-        if (!jsDocs.length) return undefined;
+        if (!jsDocs.length) { return undefined; }
 
         const validation: JSDocValidation = {};
 
         for (const jsDoc of jsDocs) {
-            const comment = jsDoc.getDescription();
             const tags = jsDoc.getTags();
 
             // Parse validation tags
@@ -257,7 +256,7 @@ export class ModelParser {
 
     private parseJSDocDescription(prop: PropertyDeclaration): string | undefined {
         const jsDocs = prop.getJsDocs();
-        if (!jsDocs.length) return undefined;
+        if (!jsDocs.length) { return undefined; }
 
         for (const jsDoc of jsDocs) {
             const description = jsDoc.getDescription().trim();

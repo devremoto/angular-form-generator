@@ -1,32 +1,32 @@
 import { ModelClass, ModelProperty } from './model-parser';
 
 export interface GenerationOptions {
-    componentName: string;
-    serviceName?: string;
-    mode: 'reactive' | 'ngModel' | 'signals';
-    generateSchema?: 'zod' | 'yup' | 'none';
+  componentName: string;
+  serviceName?: string;
+  mode: 'reactive' | 'ngModel' | 'signals';
+  generateSchema?: 'zod' | 'yup' | 'none';
 }
 
 export class FormGenerator {
-    generateComponent(model: ModelClass, options: GenerationOptions): string {
-        switch (options.mode) {
-            case 'reactive':
-                return this.generateReactiveForm(model, options);
-            case 'ngModel':
-                return this.generateTemplateForm(model, options);
-            case 'signals':
-                return this.generateSignalForm(model, options);
-            default:
-                throw new Error(`Unsupported mode: ${options.mode}`);
-        }
+  generateComponent(model: ModelClass, options: GenerationOptions): string {
+    switch (options.mode) {
+      case 'reactive':
+        return this.generateReactiveForm(model, options);
+      case 'ngModel':
+        return this.generateTemplateForm(model, options);
+      case 'signals':
+        return this.generateSignalForm(model, options);
+      default:
+        throw new Error(`Unsupported mode: ${options.mode}`);
     }
+  }
 
-    generateTemplate(model: ModelClass, options: GenerationOptions): string {
-        const formFields = model.properties
-            .map(prop => this.generateTemplateField(prop, options.mode, model.name))
-            .join('\n\n');
+  generateTemplate(model: ModelClass, options: GenerationOptions): string {
+    const formFields = model.properties
+      .map(prop => this.generateTemplateField(prop, options.mode, model.name))
+      .join('\n\n');
 
-        return `<div class="container-fluid">
+    return `<div class="container-fluid">
   <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6">
       <form ${this.getFormBinding(options)} class="needs-validation" novalidate>
@@ -62,15 +62,15 @@ ${formFields}
     </div>
   </div>
 </div>`;
-    } private generateReactiveForm(model: ModelClass, options: GenerationOptions): string {
-        const imports = this.generateReactiveImports(options);
-        const injectStatements = this.generateInjectStatements(options);
-        const formGroupInit = this.generateFormGroupInit(model);
-        const onSubmitMethod = this.generateOnSubmitMethod(model, options);
-        const onResetMethod = this.generateOnResetMethod(options);
-        const modelImport = this.generateModelImport(model, options);
+  } private generateReactiveForm(model: ModelClass, options: GenerationOptions): string {
+    const imports = this.generateReactiveImports();
+    const injectStatements = this.generateInjectStatements(options);
+    const formGroupInit = this.generateFormGroupInit(model);
+    const onSubmitMethod = this.generateOnSubmitMethod(model, options);
+    const onResetMethod = this.generateOnResetMethod(options);
+    const modelImport = this.generateModelImport(model, options);
 
-        return `${imports}
+    return `${imports}
 ${modelImport}
 
 @Component({
@@ -97,17 +97,17 @@ ${onResetMethod}
   // Getter methods for form controls
 ${model.properties.map(prop => `  get ${prop.name}() { return this.${options.componentName}Form.get('${prop.name}'); }`).join('\n')}
 }`;
-    }
+  }
 
-    private generateTemplateForm(model: ModelClass, options: GenerationOptions): string {
-        const imports = this.generateTemplateImports(options);
-        const modelProperty = this.generateModelProperty(model);
-        const onSubmitMethod = this.generateOnSubmitMethod(model, options);
-        const onResetMethod = this.generateTemplateFormResetMethod(model);
-        const modelImport = this.generateModelImport(model, options);
-        const injectStatements = this.generateInjectStatements(options);
+  private generateTemplateForm(model: ModelClass, options: GenerationOptions): string {
+    const imports = this.generateTemplateImports(options);
+    const modelProperty = this.generateModelProperty(model);
+    const onSubmitMethod = this.generateOnSubmitMethod(model, options);
+    const onResetMethod = this.generateTemplateFormResetMethod(model);
+    const modelImport = this.generateModelImport(model, options);
+    const injectStatements = this.generateInjectStatements(options);
 
-        return `${imports}
+    return `${imports}
 ${modelImport}
 
 @Component({
@@ -127,17 +127,17 @@ ${onSubmitMethod}
 
 ${onResetMethod}
 }`;
-    }
+  }
 
-    private generateSignalForm(model: ModelClass, options: GenerationOptions): string {
-        const imports = this.generateSignalImports(options);
-        const signalProperties = this.generateSignalProperties(model);
-        const onSubmitMethod = this.generateOnSubmitMethod(model, options);
-        const onResetMethod = this.generateSignalResetMethod(model);
-        const modelImport = this.generateModelImport(model, options);
-        const injectStatements = this.generateInjectStatements(options);
+  private generateSignalForm(model: ModelClass, options: GenerationOptions): string {
+    const imports = this.generateSignalImports(options);
+    const signalProperties = this.generateSignalProperties(model);
+    const onSubmitMethod = this.generateOnSubmitMethod(model, options);
+    const onResetMethod = this.generateSignalResetMethod(model);
+    const modelImport = this.generateModelImport(model, options);
+    const injectStatements = this.generateInjectStatements(options);
 
-        return `${imports}
+    return `${imports}
 ${modelImport}
 
 @Component({
@@ -154,55 +154,55 @@ ${onSubmitMethod}
 
 ${onResetMethod}
 }`;
-    } private generateReactiveImports(options?: GenerationOptions): string {
-        return `import { Component, inject } from '@angular/core';
+  } private generateReactiveImports(): string {
+    return `import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';`;
-    }
+  }
 
-    private generateTemplateImports(options?: GenerationOptions): string {
-        return `import { Component, ${(options && options.serviceName) ? 'inject' : ''} } from '@angular/core';
+  private generateTemplateImports(options?: GenerationOptions): string {
+    return `import { Component, ${(options && options.serviceName) ? 'inject' : ''} } from '@angular/core';
 import { NgForm } from '@angular/forms';`;
+  }
+
+  private generateSignalImports(options?: GenerationOptions): string {
+    return `import { Component, signal, ${options && options.serviceName ? 'inject' : ''} } from '@angular/core';`;
+  }
+
+  private generateInjectStatements(options: GenerationOptions): string {
+    const statements = options.mode === 'reactive' ? [`  private fb = inject(FormBuilder);`] : [];
+
+    if (options.serviceName) {
+      statements.push(`  private ${options.serviceName} = inject(${this.toPascalCase(options.serviceName)}Service);`);
     }
 
-    private generateSignalImports(options?: GenerationOptions): string {
-        return `import { Component, signal, ${options && options.serviceName ? 'inject' : ''} } from '@angular/core';`;
-    }
+    return statements.join('\n');
+  }
 
-    private generateInjectStatements(options: GenerationOptions): string {
-        const statements = options.mode === 'reactive' ? [`  private fb = inject(FormBuilder);`] : [];
-
-        if (options.serviceName) {
-            statements.push(`  private ${options.serviceName} = inject(${this.toPascalCase(options.serviceName)}Service);`);
-        }
-
-        return statements.join('\n');
-    }
-
-    private generateModelImport(model: ModelClass, options: GenerationOptions): string {
-        if (options.generateSchema === 'zod') {
-            return `import { ${model.name.toLowerCase()}Schema } from './${options.componentName}.schema';
+  private generateModelImport(model: ModelClass, options: GenerationOptions): string {
+    if (options.generateSchema === 'zod') {
+      return `import { ${model.name.toLowerCase()}Schema } from './${options.componentName}.schema';
 import { z } from 'zod';`;
-        } else if (options.generateSchema === 'yup') {
-            return `import { ${model.name.toLowerCase()}Schema } from './${options.componentName}.schema';
+    } else if (options.generateSchema === 'yup') {
+      return `import { ${model.name.toLowerCase()}Schema } from './${options.componentName}.schema';
 import * as yup from 'yup';`;
-        }
-
-        // Import the actual model when no schema
-        return `import { ${model.name} } from '../models/${model.name.toLowerCase()}';`;
     }
 
-    private getModelType(model: ModelClass, options: GenerationOptions): string {
-        if (options.generateSchema === 'zod') {
-            return `z.infer<typeof ${model.name.toLowerCase()}Schema>`;
-        } else if (options.generateSchema === 'yup') {
-            return `yup.InferType<typeof ${model.name.toLowerCase()}Schema>`;
-        }
-        return model.name;
-    }
+    // Import the actual model when no schema
+    return `import { ${model.name} } from '../models/${model.name.toLowerCase()}';`;
+  }
 
-    private generateValidationCode(model: ModelClass, options: GenerationOptions): string {
-        if (options.generateSchema === 'zod') {
-            return `// Validate with Zod schema
+  private getModelType(model: ModelClass, options: GenerationOptions): string {
+    if (options.generateSchema === 'zod') {
+      return `z.infer<typeof ${model.name.toLowerCase()}Schema>`;
+    } else if (options.generateSchema === 'yup') {
+      return `yup.InferType<typeof ${model.name.toLowerCase()}Schema>`;
+    }
+    return model.name;
+  }
+
+  private generateValidationCode(model: ModelClass, options: GenerationOptions): string {
+    if (options.generateSchema === 'zod') {
+      return `// Validate with Zod schema
       try {
         const validatedData = ${model.name.toLowerCase()}Schema.parse(formValue);
         if (!validatedData) return;
@@ -211,8 +211,8 @@ import * as yup from 'yup';`;
         console.error('Validation failed:', error);
         return;
       }`;
-        } else if (options.generateSchema === 'yup') {
-            return `// Validate with Yup schema
+    } else if (options.generateSchema === 'yup') {
+      return `// Validate with Yup schema
       try {
         await ${model.name.toLowerCase()}Schema.validate(this.${model.name.toLowerCase()});
         // Data is valid
@@ -220,13 +220,13 @@ import * as yup from 'yup';`;
         console.error('Validation failed:', error);
         return;
       }`;
-        }
-        return '// No additional validation schema';
     }
+    return '// No additional validation schema';
+  }
 
-    private generateSignalValidationCode(model: ModelClass, options: GenerationOptions): string {
-        if (options.generateSchema === 'zod') {
-            return `// Validate with Zod schema
+  private generateSignalValidationCode(model: ModelClass, options: GenerationOptions): string {
+    if (options.generateSchema === 'zod') {
+      return `// Validate with Zod schema
     try {
       const validatedData = ${model.name.toLowerCase()}Schema.parse(formData);
       if (!validatedData) return;
@@ -235,8 +235,8 @@ import * as yup from 'yup';`;
       console.error('Validation failed:', error);
       return;
     }`;
-        } else if (options.generateSchema === 'yup') {
-            return `// Validate with Yup schema
+    } else if (options.generateSchema === 'yup') {
+      return `// Validate with Yup schema
     try {
       await ${model.name.toLowerCase()}Schema.validate(formData);
       // Data is valid
@@ -244,127 +244,127 @@ import * as yup from 'yup';`;
       console.error('Validation failed:', error);
       return;
     }`;
-        }
-        return '// No additional validation schema';
-    } private generateFormGroupInit(model: ModelClass): string {
-        return model.properties
-            .map(prop => {
-                const validators = this.generateValidators(prop);
-                const defaultValue = this.getDefaultValue(prop);
-                return `      ${prop.name}: [${defaultValue}${validators ? `, ${validators}` : ''}]`;
-            })
-            .join(',\n');
+    }
+    return '// No additional validation schema';
+  } private generateFormGroupInit(model: ModelClass): string {
+    return model.properties
+      .map(prop => {
+        const validators = this.generateValidators(prop);
+        const defaultValue = this.getDefaultValue(prop);
+        return `      ${prop.name}: [${defaultValue}${validators ? `, ${validators}` : ''}]`;
+      })
+      .join(',\n');
+  }
+
+  private generateModelProperty(model: ModelClass): string {
+    const properties = model.properties
+      .map(prop => `${prop.name}: ${this.getDefaultValue(prop)}`)
+      .join(',\n    ');
+
+    return `{\n    ${properties}\n  }`;
+  }
+
+  private generateSignalProperties(model: ModelClass): string {
+    return model.properties
+      .map(prop => `  ${prop.name} = signal(${this.getDefaultValue(prop)});`)
+      .join('\n');
+  }
+
+  private generateValidators(prop: ModelProperty): string {
+    const validators: string[] = [];
+
+    // Check JSDoc validation first, then fallback to property-based validation
+    if (prop.jsDocValidation) {
+      if (prop.jsDocValidation.required) {
+        validators.push('Validators.required');
+      }
+
+      if (prop.jsDocValidation.minLength !== undefined) {
+        validators.push(`Validators.minLength(${prop.jsDocValidation.minLength})`);
+      }
+
+      if (prop.jsDocValidation.maxLength !== undefined) {
+        validators.push(`Validators.maxLength(${prop.jsDocValidation.maxLength})`);
+      }
+
+      if (prop.jsDocValidation.min !== undefined) {
+        validators.push(`Validators.min(${prop.jsDocValidation.min})`);
+      }
+
+      if (prop.jsDocValidation.max !== undefined) {
+        validators.push(`Validators.max(${prop.jsDocValidation.max})`);
+      }
+
+      if (prop.jsDocValidation.email) {
+        validators.push('Validators.email');
+      }
+
+      if (prop.jsDocValidation.pattern) {
+        validators.push(`Validators.pattern('${prop.jsDocValidation.pattern}')`);
+      }
+
+      if (prop.jsDocValidation.url) {
+        validators.push(`Validators.pattern('^https?:\\/\\/.+\\..+')`);
+      }
+
+      if (prop.jsDocValidation.phoneNumber) {
+        validators.push(`Validators.pattern('^\\\\+?[1-9]\\\\d{1,14}$')`);
+      }
+
+      if (prop.jsDocValidation.alphanumeric) {
+        validators.push(`Validators.pattern('^[a-zA-Z0-9]+$')`);
+      }
+
+      if (prop.jsDocValidation.numeric) {
+        validators.push(`Validators.pattern('^[0-9]+$')`);
+      }
+
+      if (prop.jsDocValidation.alpha) {
+        validators.push(`Validators.pattern('^[a-zA-Z]+$')`);
+      }
+    } else {
+      // Fallback to property-based validation
+      if (!prop.isOptional) {
+        validators.push('Validators.required');
+      }
+
+      if (prop.type === 'string') {
+        validators.push('Validators.minLength(1)');
+      }
+
+      if (prop.type === 'number') {
+        validators.push('Validators.min(0)');
+      }
+
+      if (prop.name.toLowerCase().includes('email')) {
+        validators.push('Validators.email');
+      }
     }
 
-    private generateModelProperty(model: ModelClass): string {
-        const properties = model.properties
-            .map(prop => `${prop.name}: ${this.getDefaultValue(prop)}`)
-            .join(',\n    ');
+    return validators.length > 0 ? `[${validators.join(', ')}]` : '';
+  } private generateTemplateField(prop: ModelProperty, mode: string, modelName?: string): string {
+    const inputType = this.getInputType(prop);
+    const isRequired = !prop.isOptional;
 
-        return `{\n    ${properties}\n  }`;
+    // Special handling for different input types
+    if (prop.type === 'boolean') {
+      return this.generateCheckboxField(prop, mode, modelName, isRequired);
     }
 
-    private generateSignalProperties(model: ModelClass): string {
-        return model.properties
-            .map(prop => `  ${prop.name} = signal(${this.getDefaultValue(prop)});`)
-            .join('\n');
+    if (prop.isArray && prop.type === 'string') {
+      return this.generateSelectField(prop, mode, modelName, isRequired);
     }
 
-    private generateValidators(prop: ModelProperty): string {
-        const validators: string[] = [];
+    if (prop.name.toLowerCase().includes('bio') || prop.name.toLowerCase().includes('description') || prop.name.toLowerCase().includes('content')) {
+      return this.generateTextareaField(prop, mode, modelName, isRequired);
+    }
 
-        // Check JSDoc validation first, then fallback to property-based validation
-        if (prop.jsDocValidation) {
-            if (prop.jsDocValidation.required) {
-                validators.push('Validators.required');
-            }
+    switch (mode) {
+      case 'reactive':
+        const placeholder = prop.description ||
+          `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
 
-            if (prop.jsDocValidation.minLength !== undefined) {
-                validators.push(`Validators.minLength(${prop.jsDocValidation.minLength})`);
-            }
-
-            if (prop.jsDocValidation.maxLength !== undefined) {
-                validators.push(`Validators.maxLength(${prop.jsDocValidation.maxLength})`);
-            }
-
-            if (prop.jsDocValidation.min !== undefined) {
-                validators.push(`Validators.min(${prop.jsDocValidation.min})`);
-            }
-
-            if (prop.jsDocValidation.max !== undefined) {
-                validators.push(`Validators.max(${prop.jsDocValidation.max})`);
-            }
-
-            if (prop.jsDocValidation.email) {
-                validators.push('Validators.email');
-            }
-
-            if (prop.jsDocValidation.pattern) {
-                validators.push(`Validators.pattern('${prop.jsDocValidation.pattern}')`);
-            }
-
-            if (prop.jsDocValidation.url) {
-                validators.push(`Validators.pattern('^https?:\\/\\/.+\\..+')`);
-            }
-
-            if (prop.jsDocValidation.phoneNumber) {
-                validators.push(`Validators.pattern('^\\\\+?[1-9]\\\\d{1,14}$')`);
-            }
-
-            if (prop.jsDocValidation.alphanumeric) {
-                validators.push(`Validators.pattern('^[a-zA-Z0-9]+$')`);
-            }
-
-            if (prop.jsDocValidation.numeric) {
-                validators.push(`Validators.pattern('^[0-9]+$')`);
-            }
-
-            if (prop.jsDocValidation.alpha) {
-                validators.push(`Validators.pattern('^[a-zA-Z]+$')`);
-            }
-        } else {
-            // Fallback to property-based validation
-            if (!prop.isOptional) {
-                validators.push('Validators.required');
-            }
-
-            if (prop.type === 'string') {
-                validators.push('Validators.minLength(1)');
-            }
-
-            if (prop.type === 'number') {
-                validators.push('Validators.min(0)');
-            }
-
-            if (prop.name.toLowerCase().includes('email')) {
-                validators.push('Validators.email');
-            }
-        }
-
-        return validators.length > 0 ? `[${validators.join(', ')}]` : '';
-    } private generateTemplateField(prop: ModelProperty, mode: string, modelName?: string): string {
-        const inputType = this.getInputType(prop);
-        const isRequired = !prop.isOptional;
-
-        // Special handling for different input types
-        if (prop.type === 'boolean') {
-            return this.generateCheckboxField(prop, mode, modelName, isRequired);
-        }
-
-        if (prop.isArray && prop.type === 'string') {
-            return this.generateSelectField(prop, mode, modelName, isRequired);
-        }
-
-        if (prop.name.toLowerCase().includes('bio') || prop.name.toLowerCase().includes('description') || prop.name.toLowerCase().includes('content')) {
-            return this.generateTextareaField(prop, mode, modelName, isRequired);
-        }
-
-        switch (mode) {
-            case 'reactive':
-                const placeholder = prop.description ||
-                    `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
-
-                return `    <div class="mb-3">
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <input 
         id="${prop.name}"
@@ -386,12 +386,12 @@ import * as yup from 'yup';`;
       </div>
     </div>`;
 
-            case 'ngModel':
-                const modelVar = modelName?.toLowerCase() || 'model';
-                const ngModelPlaceholder = prop.description ||
-                    `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
+      case 'ngModel':
+        const modelVar = modelName?.toLowerCase() || 'model';
+        const ngModelPlaceholder = prop.description ||
+          `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
 
-                return `    <div class="mb-3">
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <input 
         id="${prop.name}"
@@ -411,11 +411,11 @@ import * as yup from 'yup';`;
       </div>
     </div>`;
 
-            case 'signals':
-                const signalsPlaceholder = prop.description ||
-                    `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
+      case 'signals':
+        const signalsPlaceholder = prop.description ||
+          `Enter ${this.toDisplayName(prop.name).toLowerCase()}`;
 
-                return `    <div class="mb-3">
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <input 
         id="${prop.name}"
@@ -426,40 +426,40 @@ import * as yup from 'yup';`;
         placeholder="${signalsPlaceholder}"
       />
     </div>`;
-        }
+    }
 
+    return '';
+  } private getFormBinding(options: GenerationOptions): string {
+    switch (options.mode) {
+      case 'reactive':
+        return `[formGroup]="${options.componentName}Form" (ngSubmit)="onSubmit()"`;
+      case 'ngModel':
+        return `#form="ngForm" (ngSubmit)="onSubmit(form)"`;
+      case 'signals':
+        return `(ngSubmit)="onSubmit()"`;
+      default:
         return '';
-    } private getFormBinding(options: GenerationOptions): string {
-        switch (options.mode) {
-            case 'reactive':
-                return `[formGroup]="${options.componentName}Form" (ngSubmit)="onSubmit()"`;
-            case 'ngModel':
-                return `#form="ngForm" (ngSubmit)="onSubmit(form)"`;
-            case 'signals':
-                return `(ngSubmit)="onSubmit()"`;
-            default:
-                return '';
-        }
     }
+  }
 
-    private getSubmitBinding(options: GenerationOptions): string {
-        switch (options.mode) {
-            case 'reactive':
-                return `[disabled]="${options.componentName}Form.invalid"`;
-            case 'ngModel':
-                return `[disabled]="form.invalid"`;
-            case 'signals':
-                return '';
-            default:
-                return '';
-        }
+  private getSubmitBinding(options: GenerationOptions): string {
+    switch (options.mode) {
+      case 'reactive':
+        return `[disabled]="${options.componentName}Form.invalid"`;
+      case 'ngModel':
+        return `[disabled]="form.invalid"`;
+      case 'signals':
+        return '';
+      default:
+        return '';
     }
+  }
 
-    private generateOnSubmitMethod(model: ModelClass, options: GenerationOptions): string {
-        switch (options.mode) {
-            case 'reactive':
-                const validationCode = this.generateValidationCode(model, options);
-                return `  onSubmit(): void {
+  private generateOnSubmitMethod(model: ModelClass, options: GenerationOptions): string {
+    switch (options.mode) {
+      case 'reactive':
+        const validationCode = this.generateValidationCode(model, options);
+        return `  onSubmit(): void {
     if (this.${options.componentName}Form.valid) {
       const formValue: ${this.getModelType(model, options)} = this.${options.componentName}Form.value;
       ${validationCode}
@@ -468,9 +468,9 @@ import * as yup from 'yup';`;
     }
   }`;
 
-            case 'ngModel':
-                const templateValidationCode = this.generateValidationCode(model, options);
-                return `  onSubmit(form: NgForm): void {
+      case 'ngModel':
+        const templateValidationCode = this.generateValidationCode(model, options);
+        return `  onSubmit(form: NgForm): void {
     if (form.valid) {
       ${templateValidationCode}
       console.log('Form submitted:', this.${model.name.toLowerCase()});
@@ -478,9 +478,9 @@ import * as yup from 'yup';`;
     }
   }`;
 
-            case 'signals':
-                const signalValidationCode = this.generateSignalValidationCode(model, options);
-                return ` async onSubmit(): Promise<void> {
+      case 'signals':
+        const signalValidationCode = this.generateSignalValidationCode(model, options);
+        return ` async onSubmit(): Promise<void> {
     const formData: ${this.getModelType(model, options)} = {
 ${model.properties.map(prop => `      ${prop.name}: this.${prop.name}()`).join(',\n')}
     };
@@ -488,72 +488,72 @@ ${model.properties.map(prop => `      ${prop.name}: this.${prop.name}()`).join('
     console.log('Form submitted:', formData);
     ${options.serviceName ? `// this.${options.serviceName}.save${model.name}(formData);` : ''}
   }`;
-        }
-        return '';
-    } private generateOnResetMethod(options: GenerationOptions): string {
-        return `  onReset(): void {
+    }
+    return '';
+  } private generateOnResetMethod(options: GenerationOptions): string {
+    return `  onReset(): void {
     this.${options.componentName}Form.reset();
   }`;
-    }
+  }
 
-    private generateTemplateFormResetMethod(model: ModelClass): string {
-        const resetStatements = model.properties
-            .map(prop => `    this.${model.name.toLowerCase()}.${prop.name} = ${this.getDefaultValue(prop)};`)
-            .join('\n');
+  private generateTemplateFormResetMethod(model: ModelClass): string {
+    const resetStatements = model.properties
+      .map(prop => `    this.${model.name.toLowerCase()}.${prop.name} = ${this.getDefaultValue(prop)};`)
+      .join('\n');
 
-        return `  onReset(): void {
+    return `  onReset(): void {
 ${resetStatements}
   }`;
-    }
+  }
 
-    private generateSignalResetMethod(model: ModelClass): string {
-        const resetStatements = model.properties
-            .map(prop => `    this.${prop.name}.set(${this.getDefaultValue(prop)});`)
-            .join('\n');
+  private generateSignalResetMethod(model: ModelClass): string {
+    const resetStatements = model.properties
+      .map(prop => `    this.${prop.name}.set(${this.getDefaultValue(prop)});`)
+      .join('\n');
 
-        return `  onReset(): void {
+    return `  onReset(): void {
 ${resetStatements}
   }`;
-    }
+  }
 
-    private getInputType(prop: ModelProperty): string {
-        if (prop.name.toLowerCase().includes('email')) return 'email';
-        if (prop.name.toLowerCase().includes('password')) return 'password';
-        if (prop.name.toLowerCase().includes('phone')) return 'tel';
-        if (prop.name.toLowerCase().includes('url')) return 'url';
-        if (prop.type === 'number') return 'number';
-        if (prop.type === 'boolean') return 'checkbox';
-        if (prop.type === 'Date') return 'date';
-        return 'text';
-    }
+  private getInputType(prop: ModelProperty): string {
+    if (prop.name.toLowerCase().includes('email')) { return 'email'; }
+    if (prop.name.toLowerCase().includes('password')) { return 'password'; }
+    if (prop.name.toLowerCase().includes('phone')) { return 'tel'; }
+    if (prop.name.toLowerCase().includes('url')) { return 'url'; }
+    if (prop.type === 'number') { return 'number'; }
+    if (prop.type === 'boolean') { return 'checkbox'; }
+    if (prop.type === 'Date') { return 'date'; }
+    return 'text';
+  }
 
-    private getDefaultValue(prop: ModelProperty): string {
-        if (prop.initialValue) return prop.initialValue;
-        if (prop.type === 'string') return "''";
-        if (prop.type === 'number') return '0';
-        if (prop.type === 'boolean') return 'false';
-        if (prop.isArray) return '[]';
-        return 'null';
-    }
+  private getDefaultValue(prop: ModelProperty): string {
+    if (prop.initialValue) { return prop.initialValue; }
+    if (prop.type === 'string') { return "''"; }
+    if (prop.type === 'number') { return '0'; }
+    if (prop.type === 'boolean') { return 'false'; }
+    if (prop.isArray) { return '[]'; }
+    return 'null';
+  }
 
-    private toDisplayName(name: string): string {
-        return name
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/^./, str => str.toUpperCase())
-            .trim();
-    }
+  private toDisplayName(name: string): string {
+    return name
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  }
 
-    private toPascalCase(str: string): string {
-        return str
-            .split(/[-_]/)
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join('');
-    }
+  private toPascalCase(str: string): string {
+    return str
+      .split(/[-_]/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('');
+  }
 
-    private generateCheckboxField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
-        switch (mode) {
-            case 'reactive':
-                return `    <div class="mb-3">
+  private generateCheckboxField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
+    switch (mode) {
+      case 'reactive':
+        return `    <div class="mb-3">
       <div class="form-check">
         <input 
           id="${prop.name}"
@@ -567,9 +567,9 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'ngModel':
-                const modelVar = modelName?.toLowerCase() || 'model';
-                return `    <div class="mb-3">
+      case 'ngModel':
+        const modelVar = modelName?.toLowerCase() || 'model';
+        return `    <div class="mb-3">
       <div class="form-check">
         <input 
           id="${prop.name}"
@@ -584,8 +584,8 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'signals':
-                return `    <div class="mb-3">
+      case 'signals':
+        return `    <div class="mb-3">
       <div class="form-check">
         <input 
           id="${prop.name}"
@@ -599,14 +599,14 @@ ${resetStatements}
         </label>
       </div>
     </div>`;
-        }
-        return '';
     }
+    return '';
+  }
 
-    private generateTextareaField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
-        switch (mode) {
-            case 'reactive':
-                return `    <div class="mb-3">
+  private generateTextareaField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
+    switch (mode) {
+      case 'reactive':
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <textarea 
         id="${prop.name}"
@@ -623,9 +623,9 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'ngModel':
-                const modelVar = modelName?.toLowerCase() || 'model';
-                return `    <div class="mb-3">
+      case 'ngModel':
+        const modelVar = modelName?.toLowerCase() || 'model';
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <textarea 
         id="${prop.name}"
@@ -644,8 +644,8 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'signals':
-                return `    <div class="mb-3">
+      case 'signals':
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <textarea 
         id="${prop.name}"
@@ -656,17 +656,17 @@ ${resetStatements}
         placeholder="Enter ${this.toDisplayName(prop.name).toLowerCase()}"
       ></textarea>
     </div>`;
-        }
-        return '';
     }
+    return '';
+  }
 
-    private generateSelectField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
-        // For array types, we'll create a simple select with placeholder options
-        const options = ['Option 1', 'Option 2', 'Option 3']; // In real scenario, this could be dynamic
+  private generateSelectField(prop: ModelProperty, mode: string, modelName?: string, isRequired?: boolean): string {
+    // For array types, we'll create a simple select with placeholder options
+    const options = ['Option 1', 'Option 2', 'Option 3']; // In real scenario, this could be dynamic
 
-        switch (mode) {
-            case 'reactive':
-                return `    <div class="mb-3">
+    switch (mode) {
+      case 'reactive':
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <select 
         id="${prop.name}"
@@ -683,9 +683,9 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'ngModel':
-                const modelVar = modelName?.toLowerCase() || 'model';
-                return `    <div class="mb-3">
+      case 'ngModel':
+        const modelVar = modelName?.toLowerCase() || 'model';
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <select 
         id="${prop.name}"
@@ -705,8 +705,8 @@ ${resetStatements}
       </div>
     </div>`;
 
-            case 'signals':
-                return `    <div class="mb-3">
+      case 'signals':
+        return `    <div class="mb-3">
       <label for="${prop.name}" class="form-label">${this.toDisplayName(prop.name)}${isRequired ? ' *' : ''}</label>
       <select 
         id="${prop.name}"
@@ -718,7 +718,7 @@ ${resetStatements}
         ${options.map(opt => `<option value="${opt.toLowerCase()}">${opt}</option>`).join('\n        ')}
       </select>
     </div>`;
-        }
-        return '';
     }
+    return '';
+  }
 }

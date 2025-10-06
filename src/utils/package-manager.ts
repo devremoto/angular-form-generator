@@ -81,7 +81,7 @@ export class PackageManager {
 
             vscode.window.showInformationMessage(`Installing ${packageName} using ${packageManager}...`, { modal: false });
 
-            const { stdout, stderr } = await execAsync(command, {
+            const { stderr } = await execAsync(command, {
                 cwd: this.workspaceRoot,
                 timeout: 60000 // 60 seconds timeout
             });
@@ -127,7 +127,7 @@ export class PackageManager {
                     command = `npm install --save-dev ${typesPackage}`;
             }
 
-            const { stdout, stderr } = await execAsync(command, {
+            const { stderr } = await execAsync(command, {
                 cwd: this.workspaceRoot,
                 timeout: 30000 // 30 seconds timeout
             });

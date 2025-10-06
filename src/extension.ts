@@ -22,7 +22,7 @@ async function runGenerator(args: {
         filters: { 'TypeScript': ['ts'] },
         defaultUri: vscode.Uri.file(workspaceRoot)
       });
-      if (!pick?.[0]) return;
+      if (!pick?.[0]) { return; }
       filePath = pick[0].fsPath;
     }
 
@@ -38,7 +38,7 @@ async function runGenerator(args: {
         return null;
       }
     });
-    if (!modelName) return;
+    if (!modelName) { return; }
 
     // Detect Angular version to determine available form types
     const versionInfo = await AngularVersionDetector.detectAngularVersion(workspaceRoot);
@@ -72,13 +72,13 @@ async function runGenerator(args: {
       placeHolder: placeholder,
       ignoreFocusOut: true
     });
-    if (!mode) return;
+    if (!mode) { return; }
     if (mode.label === '← Back') {
       // Restart the configuration process
       return runGenerator({ filePath, modelName: undefined });
     }
 
-    const defaultComponentName = `${modelName.replace(/([A-Z])/g, (match, p1, offset) => offset > 0 ? '-' + p1.toLowerCase() : p1.toLowerCase())}-form`;
+    const defaultComponentName = `${modelName.replace(/([A-Z])/g, (match, p1, offset) => offset > 0 ? '-' + p1.toLowerCase() : p1.toLowerCase())}`;
     const componentName = await vscode.window.showInputBox({
       prompt: 'Component name (kebab-case) - Press Escape to go back',
       value: defaultComponentName,
@@ -138,7 +138,7 @@ async function runGenerator(args: {
       placeHolder: 'Generate validation schema?',
       ignoreFocusOut: true
     });
-    if (!schema) return;
+    if (!schema) { return; }
     if (schema.label === '← Back') {
       // Go back to service name step - restart from component configuration
       return runGenerator({ filePath, modelName });
@@ -218,7 +218,7 @@ async function runJSDocGenerator(args: {
         filters: { 'TypeScript': ['ts'] },
         defaultUri: vscode.Uri.file(workspaceRoot)
       });
-      if (!pick?.[0]) return;
+      if (!pick?.[0]) { return; }
       filePath = pick[0].fsPath;
     }
 
@@ -302,7 +302,7 @@ async function showAngularFormMenu(args: {
     ignoreFocusOut: true
   });
 
-  if (!selected || selected.command === 'cancel') return;
+  if (!selected || selected.command === 'cancel') { return; }
 
   switch (selected.command) {
     case 'generate':
@@ -320,7 +320,7 @@ async function showAngularFormMenu(args: {
 export function activate(ctx: vscode.ExtensionContext) {
   ctx.subscriptions.push(
     vscode.commands.registerCommand('angularForm.generate', () => runGenerator({})),
-    vscode.commands.registerCommand('angularForm.generateHere', (uri?: vscode.Uri, selected?: any, selection?: any) => {
+    vscode.commands.registerCommand('angularForm.generateHere', (uri?: vscode.Uri) => {
       // Explorer context passes the file Uri as first arg; editor context gives active document
       let filePath: string | undefined = uri?.fsPath;
       if (!filePath && vscode.window.activeTextEditor?.document) {
@@ -336,7 +336,7 @@ export function activate(ctx: vscode.ExtensionContext) {
       }
       runGenerator({ filePath, modelName: modelGuess });
     }),
-    vscode.commands.registerCommand('angularForm.generateJSDoc', (uri?: vscode.Uri, selected?: any, selection?: any) => {
+    vscode.commands.registerCommand('angularForm.generateJSDoc', (uri?: vscode.Uri) => {
       // Explorer context passes the file Uri as first arg; editor context gives active document
       let filePath: string | undefined = uri?.fsPath;
       if (!filePath && vscode.window.activeTextEditor?.document) {
@@ -352,7 +352,7 @@ export function activate(ctx: vscode.ExtensionContext) {
       }
       runJSDocGenerator({ filePath, modelName: modelGuess });
     }),
-    vscode.commands.registerCommand('angularForm.showMenu', (uri?: vscode.Uri, selected?: any, selection?: any) => {
+    vscode.commands.registerCommand('angularForm.showMenu', (uri?: vscode.Uri) => {
       // Explorer context passes the file Uri as first arg; editor context gives active document
       let filePath: string | undefined = uri?.fsPath;
       if (!filePath && vscode.window.activeTextEditor?.document) {
