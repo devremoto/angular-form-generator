@@ -1,0 +1,9 @@
+.vscode/**
+src/**
+test/**
+out/test/**
+**/*.map
+
+private
+.github/**
+    

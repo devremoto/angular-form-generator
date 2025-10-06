@@ -1,0 +1,93 @@
+name: CI/CD (VS Code Extension)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write # needed to push tags & create releases
+
+concurrency:
+  group: vscode-extension-publish
+  cancel-in-progress: false
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # so we can push tags back
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm i --force
+
+      # Optional checks: keep or remove as you like
+      - name: Type-check
+        run: npx tsc -p .
+      - name: Lint (optional)
+        run: npm run lint --if-present
+
+      - name: Build
+        run: npm run build
+
+      # ---- Bump version & push tag back to main (avoid infinite loop via [skip ci]) ----
+      - name: Configure Git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version (patch) and tag
+        run: |
+          npm version patch -m "chore(release): v%s [skip ci]"
+          git push origin HEAD:main --follow-tags
+
+      - name: Read package metadata
+        id: meta
+        shell: bash
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          VSIX="${NAME}-${VERSION}.vsix"
+          echo "name=$NAME"       >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "vsix=$VSIX"       >> $GITHUB_OUTPUT
+
+      - name: Install publisher CLIs
+        run: npm i -g @vscode/vsce ovsx
+
+      - name: Package VSIX
+        run: vsce package
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to VS Code Marketplace
+        run: vsce publish --packagePath "${{ steps.meta.outputs.vsix }}"
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX
+        run: ovsx publish "${{ steps.meta.outputs.vsix }}" -p "${{ secrets.OPEN_VSX_TOKEN }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.vsix }}
+          path: ${{ steps.meta.outputs.vsix }}
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.meta.outputs.version }}
+          name: v${{ steps.meta.outputs.version }}
+          generate_release_notes: true
+          files: ${{ steps.meta.outputs.vsix }}

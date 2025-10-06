@@ -1,0 +1,112 @@
+{
+  "name": "angular-form-generator",
+  "author": {
+    "name": "Adilson de Almeida Pedro",
+    "email": "adilson@almeidapedro.com.br",
+    "url": "https://adilson.almeidapedro.com.br",
+    "github": "https://github.com/devremoto",
+    "twitter": "https://twitter.com/devremoto",
+    "linkedin": "https://www.linkedin.com/in/adilsonpedro/"
+  },
+  "displayName": "Angular Form Generator",
+  "description": "Generate Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes",
+  "icon": "icon.png",
+  "publisher": "AdilsondeAlmeidaPedro",
+  "version": "0.1.0",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "angular",
+    "forms",
+    "generator",
+    "typescript",
+    "reactive forms",
+    "template driven"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devremoto/angular-form-generator"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "angularForm.generate",
+        "title": "Angular: Generate Form from Model"
+      },
+      {
+        "command": "angularForm.generateHere",
+        "title": "Angular: Generate Form from This Model"
+      },
+      {
+        "command": "angularForm.generateJSDoc",
+        "title": "Angular: Generate JSDoc for Model"
+      },
+      {
+        "command": "angularForm.showMenu",
+        "title": "Angular Form Generator"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "angularForm.showMenu",
+          "group": "navigation",
+          "when": "resourceExtname == .ts"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "angularForm.showMenu",
+          "group": "navigation",
+          "when": "resourceExtname == .ts"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "angularForm.generate",
+          "when": "true"
+        },
+        {
+          "command": "angularForm.generateJSDoc",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Angular Form Generator",
+      "properties": {
+        "angularFormGenerator.generateModule": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to generate an Angular module file along with the form component. When disabled, only the component files (TypeScript, HTML, CSS) will be generated."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p ./",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "node ./dist/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@angular/common": "20.3.3",
+    "@angular/core": "20.3.3",
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.25.10",
+    "ts-morph": "^22.0.0",
+    "typescript": "^5.5.4",
+    "vsce": "^2.15.0",
+    "yup": "^1.7.1",
+    "zod": "^4.1.11"
+  }
+}
