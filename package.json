@@ -12,7 +12,7 @@
   "description": "Generate Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes",
   "icon": "assets/icon.ico",
   "publisher": "AdilsondeAlmeidaPedro",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "categories": [
     "Other"
   ],
