@@ -1,13 +1,13 @@
-# Angular Form Generator
+# Angular Form Scaffolder
 
-A VS Code extension that automatically generates Angular forms from TypeScript model classes. Supports reactive forms, template-driven forms, and Angular's new signal-based forms with modern patterns and intelligent JSDoc-driven validation.
+A VS Code extension that automatically scaffolds Angular forms from TypeScript model classes. Supports reactive forms, template-driven forms, and Angular's new signal-based forms with modern patterns, intelligent JSDoc-driven validation, and automatic dependency management.
 
-> **⚡ Productivity Tool for Scaffolding**  
-> This extension is designed to boost your productivity by providing a solid foundation for form generation. The generated code serves as scaffolding that you should review, customize, and adapt to your specific project requirements. It handles the repetitive boilerplate work, allowing you to focus on the unique business logic and customizations needed for your application.
+> **⚡ Productivity Tool for Form Scaffolding**  
+> This extension is designed to boost your productivity by providing a solid foundation for Angular form development. The scaffolded code serves as a starting point that you should review, customize, and adapt to your specific project requirements. It handles the repetitive boilerplate work, allowing you to focus on the unique business logic and customizations needed for your application.
 
 ## Features
 
-- 🚀 **Generate forms from TypeScript models** - Parse your model classes and create complete Angular forms
+- 🚀 **Scaffold forms from TypeScript models** - Parse your model classes and create complete Angular forms
 - 📝 **Multiple form types support**:
   - Reactive Forms (FormBuilder, FormGroup, Validators)
   - Template-driven Forms (ngModel)
@@ -15,19 +15,20 @@ A VS Code extension that automatically generates Angular forms from TypeScript m
 - 🔍 **Smart Angular version detection** - Automatically detects your Angular version and shows appropriate form type options
 - 💉 **Modern Angular patterns** - Uses `inject()` function instead of constructor injection
 - 🎨 **Bootstrap-ready styling** - Uses Bootstrap 5 classes instead of custom CSS (reduces duplication)
-- 🔧 **Schema validation** - Optional Zod or Yup schema generation with type inference
+- 🔧 **Schema validation** - Optional Zod or Yup schema generation with automatic package installation
 - 📚 **JSDoc integration** - Generate intelligent JSDoc comments with validation rules
 - 🎯 **Smart validation** - Use JSDoc annotations to drive form validation automatically
 - 🧠 **Smart type inference** - Automatically detects types and requirements from initial values
-- 📦 **Complete component generation** - Creates TypeScript, HTML, CSS, and Module files
+- 📦 **Complete component scaffolding** - Creates TypeScript, HTML, CSS, and Module files
 - 🔍 **Smart input detection** - Automatically detects checkboxes, textareas, and select fields
 - ✅ **Built-in validation** - Generates form validation with Bootstrap feedback styles
 - 📱 **Responsive design** - Uses Bootstrap grid system and responsive utilities
 - 🔄 **Consolidated menu** - Unified context menu with back navigation support
+- 🛠️ **Automatic dependency management** - Detects and installs required packages (Zod, Yup)
 
-## 🎯 Important: Post-Generation Adaptation
+## 🎯 Important: Post-Scaffolding Adaptation
 
-**The generated code is a starting point, not a final solution.** After generation, you should:
+**The scaffolded code is a starting point, not a final solution.** After scaffolding, you should:
 
 ### ✅ **Review and Customize**
 - **Validate generated validators** - Ensure they match your business requirements
@@ -54,11 +55,11 @@ A VS Code extension that automatically generates Angular forms from TypeScript m
 ### Method 1: Unified Context Menu (Recommended)
 
 1. Right-click on a TypeScript file in the Explorer or Editor
-2. Select "Angular Form Generator" from the context menu
+2. Select "Angular Form Scaffolder" from the context menu
 3. Choose from the available options:
-   - 🔧 **Generate Form** - Create Angular form component from model class
+   - 🔧 **Scaffold Form** - Create Angular form component from model class
    - 📄 **Generate JSDoc** - Add JSDoc comments with validation rules to model properties
-   - 🎯 **Generate Form Here** - Generate form component using current file/model
+   - 🎯 **Scaffold Form Here** - Scaffold form component using current file/model
    - ❌ **Cancel** - Close the menu
 
 **Navigation Tips:**
@@ -70,11 +71,11 @@ A VS Code extension that automatically generates Angular forms from TypeScript m
 
 1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. Run one of these commands:
-   - "Angular: Generate Form from Model"
-   - "Angular: Generate Form from This Model"
+   - "Angular: Scaffold Form from Model"
+   - "Angular: Scaffold Form from This Model"
    - "Angular: Generate JSDoc for Model"
 
-### Step-by-Step Form Generation Process
+### Step-by-Step Form Scaffolding Process
 
 When generating a form, the extension guides you through these steps with full back navigation:
 
@@ -331,27 +332,27 @@ export class UserFormComponent {
 }
 ```
 
-## Generated Files
+## Scaffolded Files
 
-The extension generates the following files for each form component:
+The extension scaffolds the following files for each form component:
 
-### Always Generated
+### Always Scaffolded
 - **`component-name.component.ts`** - The TypeScript component class with form logic
 - **`component-name.component.html`** - The HTML template with Bootstrap-styled form fields
 - **`component-name.component.css`** - CSS styles for custom component styling
 
-### Conditionally Generated
+### Conditionally Scaffolded
 - **`component-name.module.ts`** - Angular module file (when `generateModule` setting is `true`)
 - **`component-name.schema.ts`** - Validation schema file (when Zod or Yup is selected)
 
-### Module Generation
+### Module Scaffolding
 Module files are useful when:
 - Working with **Angular versions < 14** (before standalone components)
 - Using **feature modules** for lazy loading
 - Following **traditional Angular architecture** with NgModules
 - **Team standards** require module-based organization
 
-For modern Angular applications (14+), **standalone components** are preferred, so keep module generation disabled.
+For modern Angular applications (14+), **standalone components** are preferred, so keep module scaffolding disabled.
 
 ## Schema Validation
 
@@ -477,7 +478,7 @@ Control whether Angular module files are generated along with components:
 
 **How to configure:**
 1. Open VS Code Settings (`Ctrl+,` / `Cmd+,`)
-2. Search for "Angular Form Generator"
+2. Search for "Angular Form Scaffolder"
 3. Toggle "Generate Module" option
 4. Or add the setting to your `settings.json` file
 
@@ -500,7 +501,7 @@ Control whether Angular module files are generated along with components:
 - **Installation prompts** ensure user consent before adding dependencies
 - **Fallback support** if automatic installation fails
 
-> **🎯 Best Practice**: Always review, test, and adapt the generated code to fit your project's architecture, security requirements, and user experience standards.
+> **🎯 Best Practice**: Always review, test, and adapt the scaffolded code to fit your project's architecture, security requirements, and user experience standards.
 
 ## Author
 

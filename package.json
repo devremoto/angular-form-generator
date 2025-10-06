@@ -1,5 +1,5 @@
 {
-  "name": "angular-form-generator",
+  "name": "angular-form-scaffolder",
   "author": {
     "name": "Adilson de Almeida Pedro",
     "email": "adilson@almeidapedro.com.br",
@@ -8,8 +8,8 @@
     "twitter": "https://twitter.com/devremoto",
     "linkedin": "https://www.linkedin.com/in/adilsonpedro/"
   },
-  "displayName": "Angular Form Generator",
-  "description": "Generate Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes",
+  "displayName": "Angular Form Scaffolder",
+  "description": "Scaffold Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes with automatic dependency management",
   "icon": "assets/icon.ico",
   "publisher": "AdilsondeAlmeidaPedro",
   "version": "0.1.2",
@@ -19,10 +19,13 @@
   "keywords": [
     "angular",
     "forms",
+    "scaffolder",
     "generator",
     "typescript",
     "reactive forms",
-    "template driven"
+    "template driven",
+    "scaffolding",
+    "boilerplate"
   ],
   "repository": {
     "type": "git",
@@ -36,11 +39,11 @@
     "commands": [
       {
         "command": "angularForm.generate",
-        "title": "Angular: Generate Form from Model"
+        "title": "Angular: Scaffold Form from Model"
       },
       {
         "command": "angularForm.generateHere",
-        "title": "Angular: Generate Form from This Model"
+        "title": "Angular: Scaffold Form from This Model"
       },
       {
         "command": "angularForm.generateJSDoc",
@@ -48,7 +51,7 @@
       },
       {
         "command": "angularForm.showMenu",
-        "title": "Angular Form Generator"
+        "title": "Angular Form Scaffolder"
       }
     ],
     "menus": {
@@ -78,7 +81,7 @@
       ]
     },
     "configuration": {
-      "title": "Angular Form Generator",
+      "title": "Angular Form Scaffolder",
       "properties": {
         "angularFormGenerator.generateModule": {
           "type": "boolean",

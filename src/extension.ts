@@ -147,7 +147,7 @@ async function runGenerator(args: {
     // Show progress
     await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
-      title: "Generating Angular Form",
+      title: "Scaffolding Angular Form",
       cancellable: false
     }, async (progress) => {
       progress.report({ increment: 0, message: "Parsing model..." });
@@ -178,7 +178,7 @@ async function runGenerator(args: {
 
     // Show success message with option to open generated files
     const openFiles = await vscode.window.showInformationMessage(
-      `✅ Form component '${componentName}' generated successfully!`,
+      `✅ Form component '${componentName}' scaffolded successfully!`,
       'Open Component',
       'Open Folder'
     );
@@ -195,8 +195,8 @@ async function runGenerator(args: {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    vscode.window.showErrorMessage(`Failed to generate form: ${errorMessage}`);
-    console.error('Form generation error:', error);
+    vscode.window.showErrorMessage(`Failed to scaffold form: ${errorMessage}`);
+    console.error('Form scaffolding error:', error);
   }
 }
 
@@ -276,8 +276,8 @@ async function showAngularFormMenu(args: {
 }) {
   const menuOptions = [
     {
-      label: '🔧 Generate Form',
-      description: 'Generate Angular form component from model class',
+      label: '🔧 Scaffold Form',
+      description: 'Scaffold Angular form component from model class',
       command: 'generate'
     },
     {
@@ -286,8 +286,8 @@ async function showAngularFormMenu(args: {
       command: 'jsdoc'
     },
     {
-      label: '🎯 Generate Form Here',
-      description: 'Generate form component using current file/model',
+      label: '🎯 Scaffold Form Here',
+      description: 'Scaffold form component using current file/model',
       command: 'generateHere'
     },
     {
@@ -298,7 +298,7 @@ async function showAngularFormMenu(args: {
   ];
 
   const selected = await vscode.window.showQuickPick(menuOptions, {
-    placeHolder: 'Select Angular Form Generator action',
+    placeHolder: 'Select Angular Form Scaffolder action',
     ignoreFocusOut: true
   });
 
