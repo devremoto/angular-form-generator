@@ -11,7 +11,7 @@
   "displayName": "Angular Form Scaffolder",
   "description": "Scaffold Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes with automatic dependency management",
   "icon": "assets/icon.ico",
-  "publisher": "AdilsondeAlmeidaPedro",
+  "publisher": "devremoto",
   "version": "0.1.5",
   "categories": [
     "Other"
