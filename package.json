@@ -12,7 +12,7 @@
   "description": "Scaffold Angular reactive forms, template-driven forms, and signal-based forms from TypeScript model classes with automatic dependency management",
   "icon": "assets/icon.ico",
   "publisher": "devremoto",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "categories": [
     "Other"
   ],
@@ -25,11 +25,10 @@
     "reactive forms",
     "signal forms",
     "zod",
-    "yup",    
+    "yup",
     "template driven",
     "scaffolding",
     "boilerplate"
-
   ],
   "repository": {
     "type": "git",
