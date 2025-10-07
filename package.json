@@ -23,9 +23,13 @@
     "generator",
     "typescript",
     "reactive forms",
+    "signal forms",
+    "zod",
+    "yup",    
     "template driven",
     "scaffolding",
     "boilerplate"
+
   ],
   "repository": {
     "type": "git",
